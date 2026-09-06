@@ -5,13 +5,24 @@ ENV PYTHONUNBUFFERED=1 \
 
 WORKDIR /app
 
-COPY backend/app /app/app
-COPY backend/requirements.txt /app/requirements.txt
-COPY models /models
-COPY backend/entry_point.sh /usr/local/bin/entry_point.sh
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends chromium fonts-liberation supervisor && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN chmod +x /usr/local/bin/entry_point.sh
+COPY backend/requirements.txt /app/backend/requirements.txt
+
+RUN --mount=type=cache,target=/root/.cache/pip pip install --default-timeout=600 --retries=5 -r /app/backend/requirements.txt
+
+RUN python -c "import nltk; nltk.download('punkt', quiet=True); nltk.download('punkt_tab', quiet=True); nltk.download('stopwords', quiet=True); nltk.download('wordnet', quiet=True)"
+
+COPY . .
+
+RUN chmod +x /app/backend/entry_point.sh
+
+ENV PYTHONPATH=/app/backend
 
 EXPOSE 8000
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+ENTRYPOINT ["/app/backend/entry_point.sh"]
+CMD ["supervisord", "-c", "/app/backend/supervisord.conf"]
+

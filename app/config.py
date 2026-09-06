@@ -4,7 +4,7 @@ from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-MODELS_DIR = REPO_ROOT / "models"
+MODELS_DIR = REPO_ROOT / "backend" / "models"
 
 
 class Settings(BaseSettings):
