@@ -36,6 +36,12 @@ app.add_middleware(
 app.include_router(analyze.router)
 
 
+@app.get("/")
+def root():
+    """Root health check endpoint."""
+    return {"message": "AI Fake News Detection API"}
+
+
 @app.get("/test")
 def test():
     """Health check endpoint."""
