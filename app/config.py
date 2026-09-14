@@ -28,7 +28,7 @@ class Settings(BaseSettings):
         "http://127.0.0.1:5173",
         "https://aiveriscope-frontend.geraldrolland123.workers.dev",
     ]
-    page_load_timeout: int = 30
+    page_load_timeout: int = 60
     page_wait_timeout: int = 10
     redis_url: str = "redis://localhost:6379/0"
     redis_result_url: str = "redis://localhost:6379/1"
