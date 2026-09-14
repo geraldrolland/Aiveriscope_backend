@@ -26,6 +26,7 @@ class Settings(BaseSettings):
         "http://127.0.0.1:3000",
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        "https://aiveriscope-frontend.geraldrolland123.workers.dev",
     ]
     page_load_timeout: int = 30
     page_wait_timeout: int = 10
