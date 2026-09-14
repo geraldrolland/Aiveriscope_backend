@@ -32,13 +32,7 @@ def analyze(url: str, task_id: str) -> dict:
 
     events.publish(task_id, {"type": "status", "stage": "analyzing", "total": len(headlines)})
 
-    results = []
-    for headline in headlines:
-        trusted, confidence = classifier.predict(headline)
-        results.append(
-            HeadlineResult(headline=headline, trusted=trusted, confidence=confidence)
-        )
-
+    results = classifier.predict_batch(headlines)
     real = sum(1 for r in results if r.trusted == "Real")
     payload = AnalyzeResponse(
         url=url,

@@ -39,3 +39,26 @@ def predict(text: str) -> tuple[str, float]:
     trusted = "Fake" if score > 0.5 else "Real"
     confidence = round(max(score, 1.0 - score), 4)
     return trusted, confidence
+
+
+def predict_batch(headlines: list[str]) -> list:
+    """Classify all headlines in a single batched prediction."""
+    model, tokenizer = load()
+
+    from keras.preprocessing.sequence import pad_sequences
+
+    from ..schemas import HeadlineResult
+
+    cleaned = [clean_text(h) for h in headlines]
+    seqs = tokenizer.texts_to_sequences(cleaned)
+    padded = pad_sequences(
+        seqs, maxlen=settings.max_len, padding="post", truncating="post"
+    )
+    scores = model.predict(padded, verbose=0)
+    results = []
+    for headline, score_arr in zip(headlines, scores):
+        score = float(score_arr[0])
+        trusted = "Fake" if score > 0.5 else "Real"
+        confidence = round(max(score, 1.0 - score), 4)
+        results.append(HeadlineResult(headline=headline, trusted=trusted, confidence=confidence))
+    return results
