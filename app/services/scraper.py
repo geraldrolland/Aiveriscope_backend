@@ -55,17 +55,19 @@ def get_driver() -> webdriver.Chrome:
 
 def fetch_page(url: str) -> str:
     """Load a URL in headless Chrome and return the rendered page source."""
-    driver = get_driver()
-    try:
-        driver.set_page_load_timeout(settings.page_load_timeout)
-        driver.get(url)
-        WebDriverWait(driver, settings.page_wait_timeout).until(
-            EC.presence_of_element_located((By.TAG_NAME, "body"))
-        )
-        return driver.page_source
-    except Exception:
-        close_driver()
-        raise
+    for attempt in range(2):
+        driver = get_driver()
+        try:
+            driver.set_page_load_timeout(settings.page_load_timeout)
+            driver.get(url)
+            WebDriverWait(driver, settings.page_wait_timeout).until(
+                EC.presence_of_element_located((By.TAG_NAME, "body"))
+            )
+            return driver.page_source
+        except Exception:
+            close_driver()
+            if attempt == 1:
+                raise
 
 
 def close_driver() -> None:
